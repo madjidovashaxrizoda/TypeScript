@@ -351,9 +351,133 @@ log(id){
  }
 
 
+ -------- Optional --------
+
+interface User {
+login: string;
+password?: string;
+}
+
+const user: User = {
+login: 'a@a.ru',
+password: '1'
+}
+
+function multiply(first: number, second?: number): number{
+    if (!second) {
+       return first * first;
+    } 
+    return first * second;
+}
+console.log(multiply(5));
+
+interface UserPro {
+login: string;
+password?: {
+    type: 'primary' | 'secondary'
+}
+}
+
+function testPass(user: UserPro) {
+    const t = user.password?.type
+}
+
+function test(params?: string) {
+    const t = params ?? multiply(5);
+}
+
+
+ ------- Exercise --------
+
+ interface Payement{
+sum: number;
+from: number;
+to: number;
+}
+
+enum Status {
+    SUCCESS = 'success',
+    FAILED = 'failed'
+}
+
+interface payementRequest extends Payement {}
+
+interface dataSucces extends Payement{
+databaseId: number; 
+}
+
+interface dataFail {
+    errorMessage: string;
+    errorCode: number;
+}
+
+interface responseSuccess {
+    status: Status.SUCCESS,
+    data: dataSucces
+}
+
+interface responseFail {
+status: Status.FAILED,
+data: dataFail
+}
+
+function get(): responseSuccess | responseFail {
+    
+}
+
+
+----------- Void ----------
+
+type void is when the function is not returning anything.
+there are some differences between void and undefined. If function returns smth, for example number | undefined, the type will be undefined.
+
+type voidFunc = () => void;
+const f: voidFunc = () => {
+    return true;
+} => this function will not return true, it will return void, since function void ignores all the types inside of it. 
+
+
+---------- Unknown --------
+
+Any and unknown are a little bit similar, but unknown is stricter than any. to use unknown we must define a type of it. Always check the type of unknown.
+Union type with unknown is always unknown. For example: type U1 = unknown | string; => U1 is unknown
+Intersection with unknown is not unknown. For example: type U2 = unknown & string; => U2 is string
+
+async function getData(){
+    try {
+        await fetch('');
+    } catch (error) {
+        if (error instanceof Error ){
+            console.log(error.message);
+        }
+    }
+}
+
+
+--------- Never ---------
+
+we use never when the function never returns.
+We can not define never. For example: const a:never = ?;
+But we can define void. For example: const a:void = unknown.
+
+function generateError(message:string): never{
+    throw new Error(message);
+}
+function isString(x: string | number): boolean{
+    if(typeof x === "string"){
+        return true;
+    }else if(typeof x === "number"){
+        return false;
+    }
+    generateError("will not work")
+}
+
+
+
 
 
     
 */
+
 
 
