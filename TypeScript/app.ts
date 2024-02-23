@@ -426,6 +426,24 @@ function get(): responseSuccess | responseFail {
 }
 
 
+with type guard
+ type Res = responseSuccess | responseFail;
+ function isSuccess(res: Res): res is responseSuccess{
+    if(res.status === Status.SUCCESS){
+        return true;
+    } return false;
+ }
+
+ function isData(res: Res): number{
+if(isSuccess(res)){
+    return res.data.database;
+} else{
+    throw new Error(res.data.errorCode)
+}
+ }
+
+
+
 ----------- Void ----------
 
 type void is when the function is not returning anything.
@@ -473,11 +491,230 @@ function isString(x: string | number): boolean{
 }
 
 
+---------- Casting of types -------
+
+let a = 5;
+let b:string = a.toString()
+
+let e:string = new String(a).valueOf() => String is not a string. It is an object,
+
+let c = 'sdf';
+let d:number = parseInt(c);
+
+interface User{
+    name: string;
+    email: string;
+    login: string;
+}
+
+const user:User = {
+    name: 'Vasa',
+    email: '212@mail.ru,
+    login: 'vasia'
+}
+
+or
+
+const user = {
+    name: 'Vasa',
+    email: '212@mail.ru,
+    login: 'vasia'
+} as User
+
+interface Admin {
+    name: string;
+    role: number;
+}
+
+First method => (but it is not recommended, since admin does not have email and login, but spread operator will add these properties to admin)
+const admin: Admin = {
+    ...user,
+    role: 1
+}
+
+Second method => function mapping (use this one)
+
+function userToAdmin(user:User): Admin {
+    return {
+        name: user.name,
+        role: 1
+    }
+}
+
+
+------------- Type Guard -----------
+
+Using type predicates
+To define a type guard, we simply need to define a function whose return type is a type predicate:
+
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+let pet = getSmallPet();
+ if (isFish(pet)) {
+  pet.swim();
+} else {
+  pet.fly();
+}
+
+
+Using the in operator
+The in operator also acts as a narrowing expression for types.
+
+For a n in x expression, where n is a string literal or string literal type and x is a union type, the “true” branch narrows to types which have an optional or required property n, and the “false” branch narrows to types which have an optional or missing property n.
+
+function move(pet: Fish | Bird) {
+  if ("swim" in pet) {
+    return pet.swim();
+  }
+  return pet.fly();
+}
+
+
+------- Class -------
+
+class User {
+    name: string;
+    age: number;
+
+constructor();
+constructor(name: string);
+constructor(age: number);
+constructor(name: string, age: number);
+constructor(ageOrName?: string | number, age?: number){
+if(typeof ageOrName === 'string'){
+     this.name = ageOrName;
+}else if (typeof ageOrName === 'number') {
+    this.age = ageOrName;
+}
+if (typeof age === 'number') {
+    this.age = age;
+}
+}
+    
+}
+const user = new User();
+ const user2 = new User('Bloom');
+ const user3 = new User(33);
+ const user4 = new User('Bloom', 33)
+
+// class Admin {
+//     role: number;
+// }
+// const admin = new Admin();
+// admin.role = 1; // if u write like this ts will throw u an error, but now it is not throwing an error, bc i change strictPropertyInitialization:true from tsconfig.json to strictPropertyInitialization:false
+
+------- Methods -------
+
+enum PaymentStatus {
+    Holded,
+    Processed,
+    Reversed
+}
+
+class Payment{
+    id: number;
+    status: PaymentStatus = PaymentStatus.Holded;
+    createdAt: Date = new Date();
+updatedAt: Date;
+
+constructor(id:number){
+    this.id = id;
+}
+
+getPaymentLifeTime(): number{
+return new Date().getTime() - this.createdAt.getTime();
+}
+
+unholdPayment() {
+    if(this.status === PaymentStatus.Processed){
+        throw new Error('Payment will not be returned!')
+    }
+    this.status = PaymentStatus.Reversed;
+    this.updatedAt = new Date();
+}
+}
+
+const payment = new Payment(1);
+payment.unholdPayment();
+console.log(payment);
+const time = payment.getPaymentLifeTime();
+console.log(time);
+
+
+----- Exercise ------
+
+class User {
+    skills: string[];
+
+    addSkill(skill:string);
+    addSkill(skills:string[]);
+    addSkill(skillOrSkills: string | string[]){
+if(typeof skillOrSkills === 'string'){
+    this.skills.push(skillOrSkills)
+}else this.skills.concat(skillOrSkills);
+    }
+}
+
+
+--------- Getter or Setter ---------
+
+
+how to do that when login should be user- and then login?
+
+class User{
+    _login: string;
+password: string;
+
+//first method:
+
+getLogin(l:string){
+    this.login = 'user-' + l;
+}
+
+//second method
+
+set login(l: string){
+    this._login = 'user-' + l;
+}
+
+get login(){
+    return 'no-login';
+}
+
+}
+
+const user = new User();
+user.login = "myLogin"
+console.log(user.login); //no-login => get can change
+
+
+
+
+
+
+
+
+
+
+
 
 
 
     
 */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
